@@ -8,6 +8,7 @@ import android.widget.Toast;
 
 import com.example.volodymyr.notecase.entity.Product;
 
+
 /**
  * Created by volodymyr on 15.11.15.
  */
@@ -35,14 +36,24 @@ public class MyOnDragListener implements View.OnDragListener {
                 DBHandler dbHandler = DBHandler.getDbHandler(applicationContext);
                 String productName = null;
                 double productPrice = 0;
-                if (price!=null && price.getText()!=null){
-                    productPrice = Double.parseDouble(price.getText().toString());
+                if (price.getText().toString().length() > 0) {
+                    try {
+                        productPrice = Double.parseDouble(price.getText().toString().trim());
+                    }catch (NumberFormatException e){
+                        e.printStackTrace();
+                    }
                 }
-                if (name!=null){
-                    productName = name.getText().toString();
+                if (name.getText().toString().trim().length() > 2) {
+                    productName = name.getText().toString().trim();
                 }
+                if (productName == null || productPrice <= 0) {
+                    Toast.makeText(applicationContext, "Error: wrong input", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+
                 Product product = new Product(category, 1, productName, productPrice);
                 dbHandler.addProduct(product);
+
                 //clean input fields after save
                 name.setText(EMPTY_STRING);
                 price.setText(EMPTY_STRING);

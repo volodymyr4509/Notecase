@@ -39,7 +39,7 @@ public class ViewCostsActivity extends Activity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(ViewCostsActivity.this, AddEditCategoryActivity.class);
+                Intent intent = new Intent(ViewCostsActivity.this, EditCostActivity.class);
                 Product product = (Product)parent.getAdapter().getItem(position);
                 intent.putExtra(PRODUCT_ID_KEY, product.getId());
                 startActivity(intent);
