@@ -17,6 +17,8 @@ import java.util.List;
  * Created by volodymyr on 25.10.15.
  */
 public class DBHandler extends SQLiteOpenHelper {
+    private static DBHandler dbHandler;
+
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "notecase.db";
 
@@ -53,7 +55,7 @@ public class DBHandler extends SQLiteOpenHelper {
     private static final String CREATE_CATEGORY = "CREATE TABLE " + TABLE_CATEGORY + " (" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             CATEGORY_NAME + " TEXT, " +
-            CATEGORY_COLOR + " TEXT);";
+            CATEGORY_COLOR + " INTEGER);";
 
     private static final String CREATE_USER = "CREATE TABLE " + TABLE_USER + " (" +
             COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -61,10 +63,15 @@ public class DBHandler extends SQLiteOpenHelper {
             USER_PASSWORD + " TEXT, " +
             USER_EMAIL + " TEXT);";
 
+    public DBHandler(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
 
-
-    public DBHandler(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
-        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+    public static synchronized DBHandler getDbHandler(Context context){
+        if (dbHandler == null){
+            dbHandler = new DBHandler(context.getApplicationContext());
+        }
+        return dbHandler;
     }
 
     @Override
@@ -123,6 +130,7 @@ public class DBHandler extends SQLiteOpenHelper {
             }
             product.setCreated(timestamp);
         }
+        db.close();
         return product;
     }
 
@@ -144,16 +152,19 @@ public class DBHandler extends SQLiteOpenHelper {
             product.setCreated(timestamp);
             products.add(product);
         }
+        db.close();
         return products;
     }
 
-    //TODO check sqlitedb parameter
-    public void addCategory(Category category, SQLiteDatabase db){
+    public void addCategory(Category category){
+        SQLiteDatabase db = getWritableDatabase();
+
         ContentValues values = new ContentValues();
         values.put(CATEGORY_NAME, category.getName());
         values.put(CATEGORY_COLOR, category.getColor());
 
         db.insert(TABLE_CATEGORY, null, values);
+        db.close();
     }
 
     public List<Category> getAllCategories() {
@@ -164,24 +175,28 @@ public class DBHandler extends SQLiteOpenHelper {
             Category category = new Category();
             category.setId(cursor.getInt(0));
             category.setName(cursor.getString(1));
-            category.setColor(cursor.getString(2));
+            category.setColor(cursor.getInt(2));
 
             categories.add(category);
         }
+        db.close();
         return categories;
     }
 
     private void initDefaultCategories(SQLiteDatabase db){
         List<Category> categoryList = new ArrayList<>();
-        categoryList.add(new Category("Food", "ff9966"));
-        categoryList.add(new Category("Accommodation", "ee8b84"));
-        categoryList.add(new Category("Transport", "6699FF"));
-        categoryList.add(new Category("Travel", "114433"));
-        categoryList.add(new Category("Dinner", "552233"));
-        categoryList.add(new Category("Other", "666633"));
+        categoryList.add(new Category("Food", 10000));
+        categoryList.add(new Category("Accommodation", 10000));
+        categoryList.add(new Category("Transport", 30000));
+        categoryList.add(new Category("Travel", 40000));
+        categoryList.add(new Category("Dinner", 50000));
+        categoryList.add(new Category("Other", 60000));
 
         for (Category category: categoryList){
-            addCategory(category, db);
+            ContentValues values = new ContentValues();
+            values.put(CATEGORY_NAME, category.getName());
+            values.put(CATEGORY_COLOR, category.getColor());
+            db.insert(TABLE_CATEGORY, null, values);
         }
     }
 

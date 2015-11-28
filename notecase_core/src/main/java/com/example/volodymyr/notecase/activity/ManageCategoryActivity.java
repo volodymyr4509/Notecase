@@ -27,7 +27,7 @@ public class ManageCategoryActivity extends Activity {
         ListView listView = (ListView) findViewById(R.id.categoriesList);
         Button addCategoryButton = (Button) findViewById(R.id.addNewCategory);
 
-        DBHandler dbHandler = new DBHandler(this, null, null, 1);
+        DBHandler dbHandler = DBHandler.getDbHandler(this);
         List<Category> categoryList = dbHandler.getAllCategories();
 
         ArrayAdapter<Category> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, categoryList);

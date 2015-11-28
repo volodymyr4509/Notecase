@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -45,14 +46,13 @@ public class AddCostActivity extends Activity {
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         Button moveButton = (Button) findViewById(R.id.move_button);
 
-        moveButton.setOnLongClickListener(new View.OnLongClickListener() {
+        moveButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public boolean onTouch(View v, MotionEvent event) {
                 ClipData clipData = ClipData.newPlainText("mylabel", "mytext");
                 View.DragShadowBuilder myShadow = new MyDragShadowBuilder(linearLayout);
                 v.startDrag(clipData, myShadow, null, 0);
-                return false;
-            }
+                return false;            }
         });
 
     }

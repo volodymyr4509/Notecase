@@ -1,15 +1,20 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" tools:context=".CostActivity">
 
-    <item android:id="@+id/view_costs"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+
+    xmlns:tools="http://schemas.android.com/tools"
+
+    tools:context="com.javacodegeeks.android.menu.MainActivity" >
+
+
+<item android:id="@+id/view_costs"
         android:title="@string/view_costs"
         android:orderInCategory="100"
-        android:showAsAction="always" />
+        />
 
     <item android:id="@+id/add_costs"
         android:title="@string/add_costs"
         android:orderInCategory="10"
-        android:showAsAction="always"
         />
 
     <item android:id="@+id/manage_category"

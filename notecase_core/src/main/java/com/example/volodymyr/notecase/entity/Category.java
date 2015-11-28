@@ -7,12 +7,12 @@ public class Category {
 
     private int id;
     private String name;
-    private String color;
+    private int color;
 
     public Category() {
     }
 
-    public Category(String name, String color) {
+    public Category(String name, int color) {
         this.name = name;
         this.color = color;
     }
@@ -33,11 +33,11 @@ public class Category {
         this.name = name;
     }
 
-    public String getColor() {
+    public int getColor() {
         return color;
     }
 
-    public void setColor(String color) {
+    public void setColor(int color) {
         this.color = color;
     }
 

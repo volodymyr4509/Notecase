@@ -32,7 +32,7 @@ public class MyOnDragListener implements View.OnDragListener {
         switch (action) {
             case DragEvent.ACTION_DROP:
 
-                DBHandler dbHandler = new DBHandler(applicationContext, null, null, 1);
+                DBHandler dbHandler = DBHandler.getDbHandler(applicationContext);
                 String productName = null;
                 double productPrice = 0;
                 if (price!=null && price.getText()!=null){

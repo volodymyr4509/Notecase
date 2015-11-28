@@ -29,7 +29,7 @@ public class ViewCostsActivity extends Activity {
 
         ListView listView = (ListView) findViewById(R.id.costsList);
 
-        DBHandler dbHandler = new DBHandler(this, null, null, 1);
+        DBHandler dbHandler = DBHandler.getDbHandler(this);
         List<Product> productList = dbHandler.getAllProducts();
 
         ArrayAdapter<Product> adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, productList);

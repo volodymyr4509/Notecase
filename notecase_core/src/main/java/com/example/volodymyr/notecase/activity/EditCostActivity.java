@@ -29,7 +29,7 @@ public class EditCostActivity extends Activity {
 
         Intent intent = getIntent();
         int productId = intent.getIntExtra(ViewCostsActivity.PRODUCT_ID_KEY, -1);
-        final DBHandler dbHandler = new DBHandler(this, null, null, 1);
+        final DBHandler dbHandler = DBHandler.getDbHandler(this);
         final Product product = dbHandler.getProductById(productId);
         List<Category> categories = dbHandler.getAllCategories();
 
