@@ -49,58 +49,31 @@
 
     </LinearLayout>
 
-    <Button
-        android:id="@+id/button_food"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="#ff9966"
-        android:text="@string/category_food"
-        android:layout_alignTop="@+id/button_transport"
-        android:layout_alignParentStart="true" />
+    <LinearLayout
+        android:id="@+id/left_category_block"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_toLeftOf="@+id/linearLayout"
+        android:layout_toStartOf="@+id/linearLayout"
+        android:layout_alignTop="@+id/linearLayout"
+        android:layout_alignParentBottom="true">
 
-    <Button
-        android:id="@+id/button_accommodation"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="#ee8b84"
-        android:text="@string/category_accommodation"
-        android:layout_above="@+id/button_other"
-        android:layout_alignParentEnd="true" />
+    </LinearLayout>
 
-    <Button
-        android:id="@+id/button_transport"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="#6699FF"
-        android:text="@string/category_transport"
-        android:layout_above="@+id/button_accommodation"
-        android:layout_alignStart="@+id/button_accommodation" />
-
-    <Button
-        android:id="@+id/button_travel"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="#114433"
-        android:text="@string/category_travel"
-        android:layout_alignTop="@+id/button_other"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:id="@+id/button_dinner"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="#552233"
-        android:text="@string/category_dinner"
-        android:layout_above="@+id/button_other"
-        android:layout_alignParentStart="true" />
-
-    <Button
-        android:id="@+id/button_other"
-        android:layout_width="300px"
-        android:layout_height="100px"
-        android:background="#666633"
-        android:text="@string/category_other"
-        android:layout_marginBottom="33dp"
+    <LinearLayout
+        android:id="@+id/right_category_block"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toRightOf="@+id/linearLayout"
+        android:layout_toEndOf="@+id/linearLayout"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentTop="true">
+
+    </LinearLayout>
 </RelativeLayout>

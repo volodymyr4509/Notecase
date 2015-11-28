@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputFilter;
 import android.text.Spanned;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -19,9 +20,11 @@ import android.widget.LinearLayout;
 
 import com.example.volodymyr.notecase.MyDragShadowBuilder;
 import com.example.volodymyr.notecase.R;
+import com.example.volodymyr.notecase.entity.Category;
+import com.example.volodymyr.notecase.util.DBHandler;
 import com.example.volodymyr.notecase.util.MyOnDragListener;
 
-import java.util.IllegalFormatCodePointException;
+import java.util.List;
 
 public class AddCostActivity extends Activity {
 
@@ -35,20 +38,39 @@ public class AddCostActivity extends Activity {
         AutoCompleteTextView nameInput = (AutoCompleteTextView) findViewById(R.id.commodityName);
         final EditText priceInput = (EditText) findViewById(R.id.commodityPrice);
 
-        Button categoryFood = (Button) findViewById(R.id.button_food);
-        Button categoryAccommodation = (Button) findViewById(R.id.button_accommodation);
-        Button categoryTransport = (Button) findViewById(R.id.button_transport);
-        Button categoryTravel = (Button) findViewById(R.id.button_travel);
-        Button categoryDinner = (Button) findViewById(R.id.button_dinner);
-        Button categoryOther = (Button) findViewById(R.id.button_other);
+        LinearLayout left_block = (LinearLayout) findViewById(R.id.left_category_block);
+        LinearLayout right_block = (LinearLayout) findViewById(R.id.right_category_block);
+        left_block.setPadding(0, 20, 50, 20);
+        right_block.setPadding(50, 20, 0, 20);
+        right_block.setGravity(Gravity.RIGHT);
+        left_block.setGravity(Gravity.LEFT);
 
-        categoryFood.setOnDragListener(new MyOnDragListener(nameInput, priceInput, 1, this));
-        categoryAccommodation.setOnDragListener(new MyOnDragListener(nameInput, priceInput, 2, this));
-        categoryTransport.setOnDragListener(new MyOnDragListener(nameInput, priceInput, 3, this));
-        categoryTravel.setOnDragListener(new MyOnDragListener(nameInput, priceInput, 4, this));
-        categoryDinner.setOnDragListener(new MyOnDragListener(nameInput, priceInput, 5, this));
-        categoryOther.setOnDragListener(new MyOnDragListener(nameInput, priceInput, 6, this));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 10, 0, 10);
+        params.width = 150;
+        params.height = 150;
 
+        DBHandler dbHandler = DBHandler.getDbHandler(this);
+        List<Category> categoryList = dbHandler.getAllCategories();
+
+        for (int i = 0; i < categoryList.size(); i++) {
+            Button categoryButton = new Button(this);
+            Category category = categoryList.get(i);
+            categoryButton.setText(category.getName());
+            categoryButton.setBackgroundColor(category.getColor());
+            categoryButton.setPadding(20, 20, 20, 20);
+            categoryButton.setLayoutParams(params);
+            categoryButton.setId(category.getId());
+            if (i % 2 == 0) {
+                left_block.addView(categoryButton);
+            } else {
+                right_block.addView(categoryButton);
+            }
+            categoryButton.setOnDragListener(new MyOnDragListener(nameInput, priceInput, category.getId(), this));
+        }
 
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         Button moveButton = (Button) findViewById(R.id.move_button);
@@ -109,7 +131,7 @@ public class AddCostActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void closeKeyboard(Activity activity){
+    public void closeKeyboard(Activity activity) {
         View view = activity.getCurrentFocus();
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
