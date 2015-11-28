@@ -76,7 +76,7 @@ public class AddCostActivity extends Activity {
                 startActivity(viewCostIntent);
                 break;
             case R.id.manage_category:
-                Intent manageCategoryIntent = new Intent(this, ManageCategoryActivity.class);
+                Intent manageCategoryIntent = new Intent(this, ViewCategoryActivity.class);
                 startActivity(manageCategoryIntent);
                 break;
         }

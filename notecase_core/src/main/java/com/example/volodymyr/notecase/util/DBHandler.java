@@ -67,8 +67,8 @@ public class DBHandler extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static synchronized DBHandler getDbHandler(Context context){
-        if (dbHandler == null){
+    public static synchronized DBHandler getDbHandler(Context context) {
+        if (dbHandler == null) {
             dbHandler = new DBHandler(context.getApplicationContext());
         }
         return dbHandler;
@@ -102,18 +102,18 @@ public class DBHandler extends SQLiteOpenHelper {
         db.close();
     }
 
-    public void updateProduct(Product product){
+    public void updateProduct(Product product) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(PRODUCT_NAME, product.getName());
         values.put(PRODUCT_PRICE, product.getPrice());
         values.put(PRODUCT_TIMESTAMP, product.getCreated().toString());
         values.put(PRODUCT_CATEGORY, product.getCategoryId());
-        db.update(TABLE_PRODUCT, values, "id"+" = "+product.getId(), null);
+        db.update(TABLE_PRODUCT, values, "id" + " = " + product.getId(), null);
         db.close();
     }
 
-    public Product getProductById(int productId){
+    public Product getProductById(int productId) {
         SQLiteDatabase db = getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_PRODUCT + " WHERE id = " + productId + ";", null);
         Product product = null;
@@ -156,7 +156,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return products;
     }
 
-    public void addCategory(Category category){
+    public void addCategory(Category category) {
         SQLiteDatabase db = getWritableDatabase();
 
         ContentValues values = new ContentValues();
@@ -166,6 +166,31 @@ public class DBHandler extends SQLiteOpenHelper {
         db.insert(TABLE_CATEGORY, null, values);
         db.close();
     }
+
+    public void updateCategory(Category category) {
+        SQLiteDatabase db = getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(CATEGORY_NAME, category.getName());
+        values.put(CATEGORY_COLOR, category.getColor());
+        db.update(TABLE_CATEGORY, values, "id" + " = " + category.getId(), null);
+        db.close();
+    }
+
+    public Category getCategoryById(int categoryId) {
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_CATEGORY + " WHERE id = " + categoryId + ";", null);
+        Category category = null;
+        if (cursor.moveToNext()) {
+            category = new Category();
+            category.setId(cursor.getInt(0));
+            category.setName(cursor.getString(1));
+            category.setColor(cursor.getInt(2));
+
+        }
+        db.close();
+        return category;
+    }
+
 
     public List<Category> getAllCategories() {
         SQLiteDatabase db = getReadableDatabase();
@@ -183,7 +208,7 @@ public class DBHandler extends SQLiteOpenHelper {
         return categories;
     }
 
-    private void initDefaultCategories(SQLiteDatabase db){
+    private void initDefaultCategories(SQLiteDatabase db) {
         List<Category> categoryList = new ArrayList<>();
         categoryList.add(new Category("Food", 10000));
         categoryList.add(new Category("Accommodation", 10000));
@@ -192,7 +217,7 @@ public class DBHandler extends SQLiteOpenHelper {
         categoryList.add(new Category("Dinner", 50000));
         categoryList.add(new Category("Other", 60000));
 
-        for (Category category: categoryList){
+        for (Category category : categoryList) {
             ContentValues values = new ContentValues();
             values.put(CATEGORY_NAME, category.getName());
             values.put(CATEGORY_COLOR, category.getColor());

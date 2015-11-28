@@ -2,7 +2,9 @@ package com.example.volodymyr.notecase.activity;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebView;
@@ -18,17 +20,28 @@ import com.example.volodymyr.notecase.util.DBHandler;
 /**
  * Created by volodymyr on 22.11.15.
  */
-public class AddCategoryActivity extends Activity {
+public class AddEditCategoryActivity extends Activity {
+    private EditText categoryName;
+    private SeekBar colorSeekBar;
+    private View resultColor;
+    private Button saveButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_category);
 
-        final EditText categoryName = (EditText) findViewById(R.id.category_name);
-        SeekBar colorSeekBar = (SeekBar) findViewById(R.id.color_picker);
-        final View resultColor = (View) findViewById(R.id.result_color);
+        categoryName = (EditText) findViewById(R.id.category_name);
+        colorSeekBar = (SeekBar) findViewById(R.id.color_picker);
+        resultColor = findViewById(R.id.result_color);
+        saveButton = (Button) findViewById(R.id.save_category);
+
+        Intent intent = getIntent();
+        final int categoryId = intent.getIntExtra(ViewCategoryActivity.CATEGORY_ID_KEY, -1);
         resultColor.setBackgroundColor(Color.BLACK);
-        Button saveButton = (Button) findViewById(R.id.save_category);
+
+        if (categoryId!=-1){
+            updateCategory(categoryId);
+        }
 
         colorSeekBar.setMax(256*7-1);
         colorSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -80,21 +93,37 @@ public class AddCategoryActivity extends Activity {
             }
         });
 
+        //if categoryId<0 insert. Update otherwise
         saveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String newCategoryName = categoryName.getText().toString();
-                int newCategoryColor = resultColor.getSolidColor();
+                ColorDrawable colorDrawable = (ColorDrawable) resultColor.getBackground();
+                int newCategoryColor = colorDrawable.getColor();
                 if (newCategoryName!=null){
-                    Category category = new Category(newCategoryName, newCategoryColor);
+                    Category newCategory = new Category(newCategoryName, newCategoryColor);
                     DBHandler dbHandler = DBHandler.getDbHandler(getApplicationContext());
-                    dbHandler.addCategory(category);
+                    if (categoryId<0){
+                        dbHandler.addCategory(newCategory);
+                    }else {
+                        newCategory.setId(categoryId);
+                        dbHandler.updateCategory(newCategory);
+                    }
                     Toast.makeText(getApplicationContext(), "Category saved", Toast.LENGTH_LONG).show();
                     finish();
+                }else {
+                    Toast.makeText(getApplicationContext(), "Category name should not be empty", Toast.LENGTH_LONG).show();
                 }
-
             }
         });
 
+    }
+
+    public void updateCategory(int categoryId){
+        DBHandler dbHandler = DBHandler.getDbHandler(this);
+        final Category category = dbHandler.getCategoryById(categoryId);
+        resultColor.setBackgroundColor(category.getColor());
+        categoryName.setText(category.getName());
+        colorSeekBar.setProgress(category.getColor());
     }
 }

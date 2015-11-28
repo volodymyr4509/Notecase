@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -17,7 +18,8 @@ import java.util.List;
 /**
  * Created by volodymyr on 15.11.15.
  */
-public class ManageCategoryActivity extends Activity {
+public class ViewCategoryActivity extends Activity {
+    public static final String CATEGORY_ID_KEY = "categoryId";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,7 +40,17 @@ public class ManageCategoryActivity extends Activity {
         addCategoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ManageCategoryActivity.this, AddCategoryActivity.class);
+                Intent intent = new Intent(ViewCategoryActivity.this, AddEditCategoryActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(ViewCategoryActivity.this, AddEditCategoryActivity.class);
+                Category category = (Category) parent.getAdapter().getItem(position);
+                intent.putExtra(CATEGORY_ID_KEY, category.getId());
                 startActivity(intent);
             }
         });
