@@ -30,22 +30,27 @@ public class AddCostActivity extends Activity {
 
     private final String DOT = ".";
 
+    LinearLayout left_block, right_block;
+    EditText priceInput;
+    AutoCompleteTextView nameInput;
+    LinearLayout.LayoutParams params;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_cost);
 
-        AutoCompleteTextView nameInput = (AutoCompleteTextView) findViewById(R.id.commodityName);
-        final EditText priceInput = (EditText) findViewById(R.id.commodityPrice);
+        nameInput = (AutoCompleteTextView) findViewById(R.id.commodityName);
+        priceInput = (EditText) findViewById(R.id.commodityPrice);
 
-        LinearLayout left_block = (LinearLayout) findViewById(R.id.left_category_block);
-        LinearLayout right_block = (LinearLayout) findViewById(R.id.right_category_block);
+        left_block = (LinearLayout) findViewById(R.id.left_category_block);
+        right_block = (LinearLayout) findViewById(R.id.right_category_block);
         left_block.setPadding(0, 20, 50, 20);
         right_block.setPadding(50, 20, 0, 20);
         right_block.setGravity(Gravity.RIGHT);
         left_block.setGravity(Gravity.LEFT);
 
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+        params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.WRAP_CONTENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
@@ -53,24 +58,7 @@ public class AddCostActivity extends Activity {
         params.width = 150;
         params.height = 150;
 
-        DBHandler dbHandler = DBHandler.getDbHandler(this);
-        List<Category> categoryList = dbHandler.getAllCategories();
-
-        for (int i = 0; i < categoryList.size(); i++) {
-            Button categoryButton = new Button(this);
-            Category category = categoryList.get(i);
-            categoryButton.setText(category.getName());
-            categoryButton.setBackgroundColor(category.getColor());
-            categoryButton.setPadding(20, 20, 20, 20);
-            categoryButton.setLayoutParams(params);
-            categoryButton.setId(category.getId());
-            if (i % 2 == 0) {
-                left_block.addView(categoryButton);
-            } else {
-                right_block.addView(categoryButton);
-            }
-            categoryButton.setOnDragListener(new MyOnDragListener(nameInput, priceInput, category.getId(), this));
-        }
+        addCategoriesOnScreen();
 
         final LinearLayout linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         Button moveButton = (Button) findViewById(R.id.move_button);
@@ -87,20 +75,7 @@ public class AddCostActivity extends Activity {
             }
         });
 
-        InputFilter filter = new InputFilter() {
-            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
-                String currInput = priceInput.getText().toString() + source;
-                if (currInput.equals(".")) {
-                    return "0.";
-                }
-                //close keyboard with .12 precision
-                int dotIndex = currInput.indexOf(DOT);
-                if (dotIndex != -1 && currInput.length() - dotIndex > 2) {
-                    closeKeyboard(activity);
-                }
-                return null;
-            }
-        };
+        InputFilter filter = new PriceInputIntentFilter(this);
         priceInput.setFilters(new InputFilter[]{filter});
 
     }
@@ -136,6 +111,48 @@ public class AddCostActivity extends Activity {
         if (view != null) {
             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
+    public void addCategoriesOnScreen(){
+        DBHandler dbHandler = DBHandler.getDbHandler(this);
+        List<Category> categoryList = dbHandler.getAllCategories();
+
+        for (int i = 0; i < categoryList.size(); i++) {
+            Button categoryButton = new Button(this);
+            Category category = categoryList.get(i);
+            categoryButton.setText(category.getName());
+            categoryButton.setBackgroundColor(category.getColor());
+            categoryButton.setPadding(20, 20, 20, 20);
+            categoryButton.setLayoutParams(params);
+            categoryButton.setId(category.getId());
+            if (i % 2 == 0) {
+                left_block.addView(categoryButton);
+            } else {
+                right_block.addView(categoryButton);
+            }
+            categoryButton.setOnDragListener(new MyOnDragListener(nameInput, priceInput, category.getId(), this));
+        }
+    }
+
+    private class PriceInputIntentFilter implements InputFilter{
+        Activity activity;
+        public PriceInputIntentFilter(Activity activity) {
+            this.activity = activity;
+        }
+
+        @Override
+        public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+            String currInput = priceInput.getText().toString() + source;
+            if (currInput.equals(".")) {
+                return "0.";
+            }
+            //close keyboard with .12 precision
+            int dotIndex = currInput.indexOf(DOT);
+            if (dotIndex != -1 && currInput.length() - dotIndex > 2) {
+                closeKeyboard(activity);
+            }
+            return null;
         }
     }
 }
